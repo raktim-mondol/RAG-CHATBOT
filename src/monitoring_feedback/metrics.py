@@ -1,6 +1,6 @@
 import numpy as np
-from sklearn.metrics import precision_score, recall_score, f1_score
-from scipy.stats import ks_2samp
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from scipy import stats
 import sys
 import os
 import logging
@@ -109,7 +109,7 @@ def detect_drift(current_data_distribution: dict, baseline_distribution: dict):
                 continue
                 
             # Perform KS-test
-            statistic, p_value = ks_2samp(current_np, baseline_np)
+            statistic, p_value = stats.ks_2samp(current_np, baseline_np)
             
             # Check if drift detected (p-value < 0.05)
             drift_detected = p_value < 0.05
@@ -129,30 +129,37 @@ def detect_drift(current_data_distribution: dict, baseline_distribution: dict):
         logging.error(f"Error detecting drift: {e}")
         return {"drift_detected": False, "error": str(e)}
 
-def calculate_accuracy_metrics(gold_data: list, predictions: list):
+def calculate_accuracy_metrics(gold_standard: list, predictions: list):
     """
-    Calculates overall accuracy metrics and checks for drift.
+    Calculate accuracy metrics for predictions.
     
     Args:
-        gold_data: List of ground truth values/labels
-        predictions: List of predicted values/labels corresponding to gold_data
+        gold_standard: List of ground truth values
+        predictions: List of predicted values
     
     Returns:
-        dict: Dictionary containing all calculated metrics
+        dict: Dictionary containing accuracy, precision, recall, and f1 score
     """
-    precision_recall = calculate_precision_recall(gold_data, predictions)
-    
-    # In a real implementation, drift detection would use feature distributions
-    # This would typically require more data than just gold_data and predictions
-    
-    # For demonstration, we'll assume we have distributions:
-    # drift_detected = detect_drift(current_distribution, baseline_distribution)
-    
+    if not gold_standard or not predictions:
+        return {
+            "accuracy": 0.0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+        }
+
+    # Calculate basic accuracy
+    correct = sum(1 for g, p in zip(gold_standard, predictions) if g == p)
+    accuracy = correct / len(gold_standard) if len(gold_standard) > 0 else 0.0
+
+    # Get precision/recall metrics
+    pr_metrics = calculate_precision_recall(gold_standard, predictions)
+
     return {
-        "precision": precision_recall["precision"],
-        "recall": precision_recall["recall"],
-        "f1": precision_recall.get("f1", 0.0),
-        # "drift_detected": drift_detected
+        "accuracy": float(accuracy),
+        "precision": pr_metrics["precision"],
+        "recall": pr_metrics["recall"],
+        "f1": pr_metrics["f1"]
     }
 
 def calculate_rouge_score(reference_summaries, generated_summaries):
