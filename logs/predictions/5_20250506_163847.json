@@ -1,0 +1,23 @@
+{
+    "document_id": 5,
+    "company": "ExampleCorp",
+    "processing_time": 3.971368,
+    "model_version": "gpt-4o-mini",
+    "timestamp": "2025-05-06T16:38:43.138477",
+    "extracted_metrics": {
+        "Total Revenue": "Error during extraction",
+        "Net Income": "Error during extraction",
+        "EPS": "Error during extraction",
+        "Operating Margin": "Error during extraction",
+        "Debt to Equity Ratio": "Error during extraction"
+    },
+    "sentiment": "Error during analysis",
+    "risks": "Error during identification",
+    "summary": "Error during generation",
+    "source_reference": {
+        "document_id": 5,
+        "company": "ExampleCorp",
+        "document_date": "2025-05-06T16:38:43.118358",
+        "document_type": "financial_report"
+    }
+}

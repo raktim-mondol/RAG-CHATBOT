@@ -1,0 +1,20 @@
+{
+    "document_id": 2,
+    "company": "NYSE_CLR",
+    "processing_time": 1.564547,
+    "model_version": "gpt-4o-mini",
+    "timestamp": "2025-05-06T12:38:02.223657",
+    "extracted_metrics": {
+        "Total Revenue": "Error during extraction",
+        "Net Income": "Error during extraction",
+        "EPS": "Error during extraction",
+        "Operating Margin": "Error during extraction",
+        "Debt to Equity Ratio": "Error during extraction"
+    },
+    "sentiment": "Error during analysis",
+    "risks": "Error during identification",
+    "summary": "Error during generation",
+    "source_reference": {
+        "document_id": 2,
+        "company": "NYSE_CLR",
+        "document_date": 

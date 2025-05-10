@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=financial_intelligence
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - API_KEY=${API_KEY:-default_api_key_change_me}
+      - EMBEDDING_MODEL=ProsusAI/finbert
+      - USE_EXAMPLE_TEXT=true
+    volumes:
+      - ./logs:/app/logs
+      - ./temp_files:/app/temp_files
+      - ./faiss_index:/app/faiss_index
+      - ./example_financial_text.txt:/app/example_financial_text.txt
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: postgres:14
+    environment:
+      - POSTGRES_DB=financial_intelligence
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+
+volumes:
+  postgres_data:

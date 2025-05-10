@@ -1,0 +1,23 @@
+{
+    "document_id": 1,
+    "company": "Demo Corp",
+    "processing_time": 0.746769,
+    "model_version": "gpt-4o-mini",
+    "timestamp": "2025-05-06T11:55:19.708211",
+    "extracted_metrics": {
+        "Total Revenue": "Error during extraction",
+        "Net Income": "Error during extraction",
+        "EPS": "Error during extraction",
+        "Operating Profit": "Error during extraction",
+        "Debt to Equity Ratio": "Error during extraction"
+    },
+    "sentiment": "Error during analysis",
+    "risks": "Error during identification",
+    "summary": "Error during generation",
+    "source_reference": {
+        "document_id": 1,
+        "company": "Demo Corp",
+        "document_date": "2025-05-06T11:55:19.708168",
+        "document_type": "10-K"
+    }
+}
