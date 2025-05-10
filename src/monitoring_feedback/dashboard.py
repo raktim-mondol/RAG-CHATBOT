@@ -6,7 +6,7 @@ import json
 
 # Add project root to path to allow imports from src
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-from src.config import LOGGING_CONFIG
+from src.config import LOGGING_CONFIG, MONGO_CONFIG  # Added MONGO_CONFIG
 from src.storage_access import storage
 from src.monitoring_feedback import logger, metrics
 

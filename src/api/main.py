@@ -16,7 +16,7 @@ from src.storage_access import storage
 from src.monitoring_feedback import logger
 from src.ingestion_pipeline.ingest import IngestionPipeline
 from src.nlp_llm_pipeline.pipeline import NLPLlmPipeline
-from src.config import LOGGING_CONFIG, API_CONFIG
+from src.config import LOGGING_CONFIG, API_CONFIG, MONGO_CONFIG
 from src.document_processor.processor import load_document
 
 # Configure logging
@@ -41,6 +41,11 @@ app.add_middleware(
 # Initialize pipeline components
 ingestion_pipeline = IngestionPipeline()
 nlp_pipeline = NLPLlmPipeline()
+
+@app.on_event("startup")
+async def startup_event():
+    storage.connect_to_mongo()
+    logging.info("Application startup: MongoDB connection established.")
 
 # Create a dependency for authentication (to be implemented in production)
 async def verify_api_key(api_key: str = Query(..., description="API key for authentication")):

@@ -25,7 +25,7 @@
 
 ### 4.4 Storage & Access
 
-- [ ] Store extracted insights in PostgreSQL with metadata indexing
+- [ ] Store extracted insights in MongoDB with metadata indexing
 - [ ] Track source reference and model versioning
 
 ### 4.5 API & Frontend Integration

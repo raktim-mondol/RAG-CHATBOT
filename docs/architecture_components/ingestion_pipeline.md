@@ -16,6 +16,7 @@ The Ingestion Pipeline is responsible for acquiring financial documents from var
 *   Normalize filenames and log source metadata
 *   Convert to raw text using PDFMiner/PyMuPDF
 *   Apply segmentation rules: identify headers, footnotes, tables
+*   Store processed documents and segments in MongoDB
 
 ## Detailed Design
 
@@ -51,3 +52,4 @@ The system will primarily ingest documents from:
 *   For each ingested document, extract and store relevant metadata such as company name, ticker, document type (10-K, 10-Q, etc.), filing date, source URL, and original filename.
 *   Log the ingestion process, including success/failure status, timestamps, and any errors encountered.
 *   Normalize filenames for consistent storage and retrieval.
+*   Store document metadata and raw/segmented text in MongoDB collections.

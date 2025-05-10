@@ -24,7 +24,7 @@ The Monitoring & Feedback component is crucial for ensuring the reliability, acc
     *   Ingestion rate and success rate
     *   Processing time per document
     *   API response times and error rates
-    *   Database performance (query times, connection pool usage)
+    *   MongoDB performance (query times, connection pool usage)
     *   Resource utilization (CPU, memory, GPU if applicable)
 *   Set up alerts for anomalies or performance degradation.
 

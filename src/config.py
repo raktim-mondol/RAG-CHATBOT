@@ -4,12 +4,10 @@ from dotenv import load_dotenv
 # Load environment variables from .env file if present
 load_dotenv()
 
-# Database configuration
-DB_CONFIG = {
-    "host": os.environ.get("DB_HOST", "localhost"),
-    "database": os.environ.get("DB_NAME", "financial_intelligence"),
-    "user": os.environ.get("DB_USER", "user"),
-    "password": os.environ.get("DB_PASSWORD", "password"),
+# MongoDB configuration
+MONGO_CONFIG = {
+    "uri": os.environ.get("MONGO_URI", "mongodb://localhost:27017/financial_intelligence"),
+    "database_name": os.environ.get("MONGO_DB_NAME", "financial_intelligence")
 }
 
 # API configuration

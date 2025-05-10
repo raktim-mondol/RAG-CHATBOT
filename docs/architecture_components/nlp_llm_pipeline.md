@@ -33,8 +33,7 @@ The NLP & LLM Pipeline is the core intelligence component, responsible for extra
 ### Retriever-Augmented Generation (RAG)
 
 *   Implement a RAG mechanism to retrieve relevant document segments based on a user query or an agent's prompt.
-*   The retriever will use the document embeddings and vector index to find the most similar segments to the query embedding.
-*   These retrieved segments will be provided as context to the LLM agents to improve the accuracy and relevance of their outputs.
+*   Store the aggregated insights in a structured format within MongoDB, ready for storage and retrieval.
 
 ### NLP Agent Framework
 

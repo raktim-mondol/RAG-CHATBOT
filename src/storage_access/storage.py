@@ -1,356 +1,209 @@
-import psycopg2
-from psycopg2 import sql
+import pymongo
+import logging
 import sys
 import os
+from bson.objectid import ObjectId
 
 # Add project root to path to allow imports from src
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-from src.config import DB_CONFIG
+from src.config import MONGO_CONFIG
 
-# Database connection details from config
-DB_HOST = DB_CONFIG["host"]
-DB_NAME = DB_CONFIG["database"]
-DB_USER = DB_CONFIG["user"]
-DB_PASSWORD = DB_CONFIG["password"]
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-def create_insights_table():
-    """Creates the insights table in the PostgreSQL database."""
-    conn = None
+# MongoDB connection details from config
+MONGO_URI = MONGO_CONFIG["uri"]
+DATABASE_NAME = MONGO_CONFIG["database_name"]
+
+client = None
+db = None
+
+def connect_to_mongo():
+    global client, db
     try:
-        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
-        cur = conn.cursor()
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS insights (
-                id SERIAL PRIMARY KEY,
-                metric VARCHAR(255) NOT NULL,
-                value TEXT,
-                timestamp TIMESTAMP NOT NULL,
-                company VARCHAR(255) NOT NULL,
-                source_reference TEXT,
-                model_version VARCHAR(50),
-                original_text TEXT,
-                page_numbers INT[]
-            );
-        """)
-        conn.commit()
-        print("Insights table created successfully.")
-    except (Exception, psycopg2.Error) as error:
-        print(f"Error while connecting to PostgreSQL or creating table: {error}")
-    finally:
-        if conn:
-            cur.close()
-            conn.close()
+        client = pymongo.MongoClient(MONGO_URI)
+        db = client[DATABASE_NAME]
+        logger.info(f"Successfully connected to MongoDB at {MONGO_URI} and database '{DATABASE_NAME}'")
+        # Create collections if they don't exist and add any necessary indexes
+        initialize_database()
+    except pymongo.errors.ConnectionFailure as e:
+        logger.error(f"Could not connect to MongoDB: {e}")
+        sys.exit(1)
 
-def create_documents_table():
-    """Creates the documents table to store metadata about ingested documents."""
-    conn = None
-    try:
-        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
-        cur = conn.cursor()
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS documents (
-                id SERIAL PRIMARY KEY,
-                company VARCHAR(255) NOT NULL,
-                doc_type VARCHAR(50) NOT NULL,
-                filing_date TIMESTAMP,
-                source_url TEXT,
-                file_path TEXT,
-                processed BOOLEAN DEFAULT FALSE,
-                ingestion_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        """)
-        conn.commit()
-        print("Documents table created successfully.")
-    except (Exception, psycopg2.Error) as error:
-        print(f"Error while creating documents table: {error}")
-    finally:
-        if conn:
-            cur.close()
-            conn.close()
+connect_to_mongo() # Initialize connection when module is loaded
 
-def create_segments_table():
-    """Creates the segments table to store document segments."""
-    conn = None
-    try:
-        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
-        cur = conn.cursor()
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS segments (
-                id SERIAL PRIMARY KEY,
-                document_id INTEGER REFERENCES documents(id) ON DELETE CASCADE,
-                section_type VARCHAR(100),
-                text TEXT,
-                start_page INTEGER,
-                end_page INTEGER,
-                embedding_available BOOLEAN DEFAULT FALSE
-            );
-        """)
-        conn.commit()
-        print("Segments table created successfully.")
-    except (Exception, psycopg2.Error) as error:
-        print(f"Error while creating segments table: {error}")
-    finally:
-        if conn:
-            cur.close()
-            conn.close()
-
-def save_document(document_data):
-    """
-    Saves document metadata into the documents table.
-    Returns document_id if successful, None otherwise.
-    """
-    conn = None
-    document_id = None
-    try:
-        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
-        cur = conn.cursor()
-        insert_query = sql.SQL("""
-            INSERT INTO documents (company, doc_type, filing_date, source_url, file_path, processed)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            RETURNING id
-        """)
-        cur.execute(insert_query, (
-            document_data.get('company'),
-            document_data.get('doc_type'),
-            document_data.get('filing_date'),
-            document_data.get('source_url'),
-            document_data.get('file_path'),
-            document_data.get('processed', False)
-        ))
-        document_id = cur.fetchone()[0]
-        conn.commit()
-        print(f"Document saved successfully with ID: {document_id}")
-    except (Exception, psycopg2.Error) as error:
-        print(f"Error while saving document: {error}")
-    finally:
-        if conn:
-            cur.close()
-            conn.close()
-    return document_id
-
-def save_segments(segments, document_id):
-    """
-    Saves document segments into the segments table.
-    """
-    conn = None
-    try:
-        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
-        cur = conn.cursor()
-        
-        for segment in segments:
-            insert_query = sql.SQL("""
-                INSERT INTO segments (document_id, section_type, text, start_page, end_page)
-                VALUES (%s, %s, %s, %s, %s)
-            """)
-            cur.execute(insert_query, (
-                document_id,
-                segment.get('section_type'),
-                segment.get('text'),
-                segment.get('start_page', 0),  # Default to page 0 if not specified
-                segment.get('end_page', 0)     # Default to page 0 if not specified
-            ))
-        
-        conn.commit()
-        print(f"Saved {len(segments)} segments for document ID: {document_id}")
-    except (Exception, psycopg2.Error) as error:
-        print(f"Error while saving segments: {error}")
-    finally:
-        if conn:
-            cur.close()
-            conn.close()
-
-def save_insight(insight_data):
-    """
-    Saves a single insight into the database.
-    insight_data is expected to be a dictionary with keys:
-    metric, value, timestamp, company, source_reference, model_version, original_text, page_numbers
-    """
-    conn = None
-    try:
-        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
-        cur = conn.cursor()
-        insert_query = sql.SQL("""
-            INSERT INTO insights (metric, value, timestamp, company, source_reference, model_version, original_text, page_numbers)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            RETURNING id
-        """)
-        cur.execute(insert_query, (
-            insight_data.get('metric'),
-            insight_data.get('value'),
-            insight_data.get('timestamp'),
-            insight_data.get('company'),
-            insight_data.get('source_reference'),
-            insight_data.get('model_version'),
-            insight_data.get('original_text'),
-            insight_data.get('page_numbers')
-        ))
-        insight_id = cur.fetchone()[0]
-        conn.commit()
-        print(f"Insight saved successfully with ID: {insight_id}")
-        return insight_id
-    except (Exception, psycopg2.Error) as error:
-        print(f"Error while saving insight: {error}")
-        return None
-    finally:
-        if conn:
-            cur.close()
-            conn.close()
-
-def create_indexes():
-    """Creates indexes on the insights table for efficient search and retrieval."""
-    conn = None
-    try:
-        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
-        cur = conn.cursor()
-        cur.execute("CREATE INDEX IF NOT EXISTS idx_insights_metric ON insights (metric);")
-        cur.execute("CREATE INDEX IF NOT EXISTS idx_insights_company ON insights (company);")
-        cur.execute("CREATE INDEX IF NOT EXISTS idx_insights_timestamp ON insights (timestamp);")
-        cur.execute("CREATE INDEX IF NOT EXISTS idx_insights_page_numbers ON insights USING GIN (page_numbers);")
-        
-        # Indexes for the documents table
-        cur.execute("CREATE INDEX IF NOT EXISTS idx_documents_company ON documents (company);")
-        cur.execute("CREATE INDEX IF NOT EXISTS idx_documents_doc_type ON documents (doc_type);")
-        cur.execute("CREATE INDEX IF NOT EXISTS idx_documents_filing_date ON documents (filing_date);")
-        
-        # Indexes for segments table
-        cur.execute("CREATE INDEX IF NOT EXISTS idx_segments_document_id ON segments (document_id);")
-        cur.execute("CREATE INDEX IF NOT EXISTS idx_segments_section_type ON segments (section_type);")
-        
-        conn.commit()
-        print("Indexes created successfully.")
-    except (Exception, psycopg2.Error) as error:
-        print(f"Error while creating indexes: {error}")
-    finally:
-        if conn:
-            cur.close()
-            conn.close()
-
-def get_all_insights():
-    """Retrieves all insights from the database."""
-    conn = None
-    insights = []
-    try:
-        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
-        cur = conn.cursor()
-        cur.execute("SELECT id, metric, value, timestamp, company, source_reference, model_version, original_text, page_numbers FROM insights;")
-        insights = cur.fetchall()
-    except (Exception, psycopg2.Error) as error:
-        print(f"Error while retrieving all insights: {error}")
-    finally:
-        if conn:
-            cur.close()
-            conn.close()
-    return insights
-
-def get_document_by_id(document_id):
-    """Retrieves a document by ID."""
-    conn = None
-    document = None
-    try:
-        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
-        cur = conn.cursor()
-        cur.execute("SELECT id, company, doc_type, filing_date, source_url, file_path, processed, ingestion_timestamp FROM documents WHERE id = %s;", (document_id,))
-        result = cur.fetchone()
-        if result:
-            document = {
-                "id": result[0],
-                "company": result[1],
-                "doc_type": result[2],
-                "filing_date": result[3],
-                "source_url": result[4],
-                "file_path": result[5],
-                "processed": result[6],
-                "ingestion_timestamp": result[7]
-            }
-    except (Exception, psycopg2.Error) as error:
-        print(f"Error while retrieving document by ID: {error}")
-    finally:
-        if conn:
-            cur.close()
-            conn.close()
-    return document
-
-def get_document_segments(document_id):
-    """Retrieves all segments for a document."""
-    conn = None
-    segments = []
-    try:
-        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
-        cur = conn.cursor()
-        cur.execute("SELECT id, section_type, text, start_page, end_page FROM segments WHERE document_id = %s ORDER BY id;", (document_id,))
-        results = cur.fetchall()
-        for result in results:
-            segments.append({
-                "id": result[0],
-                "section_type": result[1],
-                "text": result[2],
-                "start_page": result[3],
-                "end_page": result[4]
-            })
-    except (Exception, psycopg2.Error) as error:
-        print(f"Error while retrieving document segments: {error}")
-    finally:
-        if conn:
-            cur.close()
-            conn.close()
-    return segments
-
-def query_insights(metric=None, date=None, company=None):
-    """Queries insights based on metric, date, and company."""
-    conn = None
-    insights = []
-    try:
-        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
-        cur = conn.cursor()
-        query = "SELECT id, metric, value, timestamp, company, source_reference, model_version, original_text, page_numbers FROM insights WHERE 1=1"
-        params = []
-        if metric:
-            query += " AND metric = %s"
-            params.append(metric)
-        if date:
-            query += " AND DATE(timestamp) = %s"
-            params.append(date)
-        if company:
-            query += " AND company = %s"
-            params.append(company)
-
-        cur.execute(query, params)
-        insights = cur.fetchall()
-    except (Exception, psycopg2.Error) as error:
-        print(f"Error while querying insights: {error}")
-    finally:
-        if conn:
-            cur.close()
-            conn.close()
-    return insights
-
-def get_insights_by_document(document_id):
-    """Retrieves all insights related to a specific document."""
-    conn = None
-    insights = []
-    try:
-        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
-        cur = conn.cursor()
-        # We assume that source_reference contains the document ID
-        cur.execute("""
-            SELECT id, metric, value, timestamp, company, source_reference, model_version, original_text, page_numbers 
-            FROM insights WHERE source_reference LIKE %s;
-        """, (f"%document_id={document_id}%",))
-        insights = cur.fetchall()
-    except (Exception, psycopg2.Error) as error:
-        print(f"Error while retrieving insights by document: {error}")
-    finally:
-        if conn:
-            cur.close()
-            conn.close()
-    return insights
+def get_db():
+    """Returns the MongoDB database instance."""
+    if db is None:
+        connect_to_mongo()
+    return db
 
 def initialize_database():
-    """Initialize the database schema by creating all necessary tables and indexes."""
-    create_insights_table()
-    create_documents_table()
-    create_segments_table()
-    create_indexes()
+    """Creates collections and indexes if they don't already exist."""
+    db_instance = get_db()
+    collections = ["documents", "segments", "insights"]
+    for collection_name in collections:
+        if collection_name not in db_instance.list_collection_names():
+            db_instance.create_collection(collection_name)
+            logger.info(f"Created collection: {collection_name}")
+
+    # Example of creating an index (adjust as needed)
+    if "documents" in db_instance.list_collection_names():
+        db_instance.documents.create_index([("company", pymongo.ASCENDING), ("doc_type", pymongo.ASCENDING)], background=True)
+        logger.info("Created index on documents collection (company, doc_type)")
+    if "insights" in db_instance.list_collection_names():
+        db_instance.insights.create_index([("document_id", pymongo.ASCENDING), ("metric_name", pymongo.ASCENDING)], background=True)
+        logger.info("Created index on insights collection (document_id, metric_name)")
+
+def save_document(document_data: dict) -> str:
+    """Saves document metadata to the 'documents' collection.
+    Returns the ID of the inserted document.
+    """
+    db_instance = get_db()
+    result = db_instance.documents.insert_one(document_data)
+    logger.info(f"Saved document with ID: {result.inserted_id}")
+    return str(result.inserted_id)
+
+def save_segments(segments: list, document_id: str):
+    """Saves document segments to the 'segments' collection.
+    Each segment should have a 'document_id' field linking it to the parent document.
+    """
+    db_instance = get_db()
+    if not segments:
+        logger.info("No segments to save.")
+        return
+    for segment in segments:
+        segment["document_id"] = ObjectId(document_id) # Ensure document_id is ObjectId if it's a string
+    result = db_instance.segments.insert_many(segments)
+    logger.info(f"Saved {len(result.inserted_ids)} segments for document ID: {document_id}")
+
+def save_insight(insight_data: dict) -> str:
+    """Saves an insight to the 'insights' collection.
+    Returns the ID of the inserted insight.
+    """
+    db_instance = get_db()
+    if "document_id" in insight_data and isinstance(insight_data["document_id"], str):
+        insight_data["document_id"] = ObjectId(insight_data["document_id"])
+    result = db_instance.insights.insert_one(insight_data)
+    logger.info(f"Saved insight with ID: {result.inserted_id}")
+    return str(result.inserted_id)
+
+def get_all_insights() -> list:
+    """Retrieves all insights from the 'insights' collection."""
+    db_instance = get_db()
+    insights = list(db_instance.insights.find())
+    logger.info(f"Retrieved {len(insights)} insights.")
+    return insights
+
+def get_document_by_id(document_id: str) -> dict:
+    """Retrieves a document by its ID from the 'documents' collection."""
+    db_instance = get_db()
+    document = db_instance.documents.find_one({"_id": ObjectId(document_id)})
+    if document:
+        logger.info(f"Retrieved document with ID: {document_id}")
+    else:
+        logger.warning(f"No document found with ID: {document_id}")
+    return document
+
+def get_document_segments(document_id: str) -> list:
+    """Retrieves all segments for a given document ID from the 'segments' collection."""
+    db_instance = get_db()
+    segments = list(db_instance.segments.find({"document_id": ObjectId(document_id)}))
+    logger.info(f"Retrieved {len(segments)} segments for document ID: {document_id}")
+    return segments
+
+def query_insights(metric: str = None, date_str: str = None, company: str = None, document_id: str = None) -> list:
+    """Queries insights based on metric, date, company, or document_id."""
+    db_instance = get_db()
+    query = {}
+    if metric:
+        query["metric_name"] = metric # Assuming insights have a 'metric_name' field
+    if date_str: # Assuming insights have a 'date' field (e.g., as string or datetime object)
+        # This is a simple exact match. You might need more complex date range queries.
+        query["date"] = date_str
+    if company: # Assuming insights are linked to documents that have a 'company' field
+                # This might require a join or a denormalized company field in insights
+        # For a simple approach, if insights store company directly:
+        # query["company"] = company
+        # If company is in the document, you might need to query documents first then insights
+        logger.warning("Querying insights by company might require specific schema design.")
+    if document_id:
+        query["document_id"] = ObjectId(document_id)
+
+    insights = list(db_instance.insights.find(query))
+    logger.info(f"Retrieved {len(insights)} insights based on query: {query}")
+    return insights
+
+def get_insights_by_document(document_id: str) -> list:
+    """Retrieves all insights for a given document ID."""
+    return query_insights(document_id=document_id)
+
+# Example of how to clear a collection (use with caution)
+def _clear_collection(collection_name: str):
+    db_instance = get_db()
+    if collection_name in db_instance.list_collection_names():
+        db_instance[collection_name].delete_many({})
+        logger.info(f"Cleared all documents from collection: {collection_name}")
 
 if __name__ == '__main__':
-    initialize_database()
+    # This block can be used for testing the storage module directly
+    logger.info("Running storage module tests...")
+    connect_to_mongo() # Ensure connection
+    initialize_database() # Ensure collections and indexes
+
+    # Example usage:
+    # 1. Clear existing data for a clean test
+    _clear_collection("documents")
+    _clear_collection("segments")
+    _clear_collection("insights")
+
+    # 2. Save a document
+    sample_doc_data = {
+        "company": "TestCorp Inc.",
+        "doc_type": "10-K",
+        "filing_date": "2025-01-15",
+        "source_url": "http://example.com/10k",
+        "processed": False
+    }
+    doc_id = save_document(sample_doc_data)
+    print(f"Saved document with ID: {doc_id}")
+
+    # 3. Retrieve the document
+    retrieved_doc = get_document_by_id(doc_id)
+    print(f"Retrieved document: {retrieved_doc}")
+
+    # 4. Save segments for the document
+    sample_segments = [
+        {"text": "This is the first segment.", "page_number": 1, "segment_type": "introduction"},
+        {"text": "This is the second segment, discussing financials.", "page_number": 5, "segment_type": "financials"}
+    ]
+    save_segments(sample_segments, doc_id)
+
+    # 5. Retrieve segments
+    retrieved_segments = get_document_segments(doc_id)
+    print(f"Retrieved segments: {retrieved_segments}")
+
+    # 6. Save an insight
+    sample_insight_data = {
+        "document_id": doc_id,
+        "metric_name": "Total Revenue",
+        "value": "100M USD",
+        "source_text": "Total revenue was 100 million US dollars.",
+        "page_number": 5,
+        "date": "2025-01-15"
+    }
+    insight_id = save_insight(sample_insight_data)
+    print(f"Saved insight with ID: {insight_id}")
+
+    # 7. Query insights
+    queried_insights = query_insights(metric="Total Revenue", document_id=doc_id)
+    print(f"Queried insights: {queried_insights}")
+
+    all_insights_for_doc = get_insights_by_document(doc_id)
+    print(f"All insights for document {doc_id}: {all_insights_for_doc}")
+
+    all_insights = get_all_insights()
+    print(f"All insights in DB: {len(all_insights)}")
+
+    logger.info("Storage module tests completed.")

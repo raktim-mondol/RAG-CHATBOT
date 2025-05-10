@@ -14,7 +14,7 @@ from typing import List, Dict, Any
 
 # Add project root to path to allow imports from src
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-from src.config import FILE_STORAGE, LOGGING_CONFIG
+from src.config import FILE_STORAGE, LOGGING_CONFIG, MONGO_CONFIG # Added MONGO_CONFIG
 from src.storage_access import storage
 
 # Configure logging
@@ -272,71 +272,61 @@ class IngestionPipeline:
         return metadata
 
     def process_document(self, source_url: str, doc_type: str) -> dict:
-        """
-        Main method to process a document from acquisition through parsing and segmentation.
-        Returns a dict with document_id, segments, and metadata.
-        """
-        result = {
-            "success": False,
-            "document_id": None,
-            "segments": [],
-            "metadata": {},
-            "error": None
-        }
-        
-        # Step 1: Acquire the document
-        file_path, doc_format = self.acquire_document(source_url, doc_type)
-        if not file_path or not doc_format:
-            result["error"] = "Failed to acquire document"
-            return result
-            
-        # Step 2: Parse the document
-        raw_text = self.parse_document(file_path, doc_format)
-        if not raw_text:
-            result["error"] = "Failed to parse document"
-            return result
-            
-        # Step 3: Clean the text
-        cleaned_text = self.clean_text(raw_text)
-            
-        # Step 4: Extract metadata
-        metadata = self.extract_metadata_from_text(cleaned_text, doc_type)
-        
-        # Add source information to metadata
-        metadata["source_url"] = source_url
-        metadata["doc_type"] = doc_type
-        metadata["file_path"] = file_path
-        
-        # Step 5: Segment the document
-        segments = self.segment_document(cleaned_text, doc_type)
-        
-        # Step 6: Extract structured content
-        structured_data = self.handle_structured_content(file_path, doc_format)
-        metadata["structured_data"] = structured_data
-        
-        # Step 7: Save document and segments to database
-        document_id = storage.save_document(metadata)
-        if document_id:
-            storage.save_segments(segments, document_id)
-            
-            result["success"] = True
-            result["document_id"] = document_id
-            result["segments"] = segments
-            result["metadata"] = metadata
-            
-            logging.info(f"Document processed successfully. Document ID: {document_id}")
-        else:
-            result["error"] = "Failed to save document to database"
-            
-        return result
-            
+        """Processes a single document: acquire, parse, clean, segment, and store."""
+        logging.info(f"Processing document from {source_url} of type {doc_type}")
+        try:
+            # 1. Acquire Document
+            file_path, doc_format = self.acquire_document(source_url, doc_type)
+            if not file_path or not doc_format:
+                logging.error("Failed to acquire document.")
+                return None
+
+            # 2. Parse Document
+            raw_text = self.parse_document(file_path, doc_format)
+            if not raw_text:
+                logging.error("Failed to parse document.")
+                return None
+
+            # 3. Clean Text
+            cleaned_text = self.clean_text(raw_text)
+
+            # 4. Segment Document
+            segments_data = self.segment_document(cleaned_text, doc_type)
+            if not segments_data:
+                logging.warning("No segments were created for the document.")
+                segments_data = [] # Ensure it's a list
+
+            # 5. Extract Metadata
+            metadata = self.extract_metadata_from_text(cleaned_text, doc_type)
+            metadata.update({
+                'source_url': source_url,
+                'doc_type': doc_type,
+                'file_path': file_path,
+                'ingestion_date': datetime.datetime.now().isoformat(),
+                'status': 'processed'
+            })
+
+            # 6. Store Document Metadata in MongoDB
+            document_id = storage.save_document(metadata)
+            logging.info(f"Document metadata saved with ID: {document_id}")
+
+            # 7. Store Segments in MongoDB, linking to the document_id
+            if segments_data:
+                for seg in segments_data:
+                    seg['document_id'] = document_id 
+                storage.save_segments(segments_data, document_id)
+
+            return {"document_id": document_id, "metadata": metadata, "num_segments": len(segments_data)}
+        except Exception as e:
+            logging.error(f"Error processing document {source_url}: {e}", exc_info=True)
+            return None
+
     def run(self, document_list=None):
         """Runs the ingestion pipeline. Can process a list of documents or run in a triggered mode."""
         logging.info("Running Ingestion Pipeline...")
 
         if document_list is None:
             logging.warning("No document list provided. Running in demonstration mode with a single example document.")
-            # Example: In a scheduled or triggered environment, document_list would be populated
             document_list = [{"url": "http://example.com/financial_report.html", "doc_type": "10-K"}]
 
         results = []
@@ -348,11 +338,9 @@ class IngestionPipeline:
                 logging.error("Skipping document due to missing URL or document type.")
                 continue
 
-            # Process the document
             result = self.process_document(source_url, doc_type)
             results.append(result)
             
-            # Clean up temporary files
             file_path = doc_info.get("file_path")
             if file_path and os.path.exists(file_path):
                 try:

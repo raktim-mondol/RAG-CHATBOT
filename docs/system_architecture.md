@@ -11,7 +11,7 @@ graph TD
     D --> E2[Risk Extractor]
     D --> E3[Summary Generator]
     D --> E4[Sentiment Analyzer]
-    E1 --> F[Insight Storage (PostgreSQL)]
+    E1 --> F[Insight Storage (MongoDB)]
     E2 --> F
     E3 --> F
     E4 --> F

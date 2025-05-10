@@ -10,16 +10,16 @@ import argparse
 
 # Add project root to path to allow imports from src
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-from src.storage_access import storage
-from src.config import DB_CONFIG, FILE_STORAGE
+from src.storage_access import storage  # Imports the new MongoDB storage module
+from src.config import MONGO_CONFIG  # Updated to MONGO_CONFIG
 from src.nlp_llm_pipeline.pipeline import NLPLlmPipeline
 from src.ingestion_pipeline.ingest import IngestionPipeline
 
 def initialize_database():
-    """Initialize the database schema."""
-    print("Initializing database schema...")
-    storage.initialize_database()
-    print("Database schema initialized successfully.")
+    """Initialize the MongoDB database (collections and indexes)."""
+    print("Initializing MongoDB database...")
+    storage.connect_to_mongo()  # Ensures connection and calls initialize_database internally
+    print("MongoDB database initialized successfully.")
 
 def create_demo_document():
     """Create a sample financial document for demo purposes."""
@@ -29,7 +29,7 @@ def create_demo_document():
     document_data = {
         'company': 'Demo Corp',
         'doc_type': '10-K',
-        'filing_date': datetime.datetime.now(),
+        'filing_date': datetime.datetime.now().isoformat(),  # Store as ISO format string
         'source_url': 'https://example.com/demo-financials',
         'file_path': 'demo_document.txt',
         'processed': True
@@ -217,10 +217,10 @@ def create_env_file():
         print("Creating template .env file...")
         with open(env_path, 'w') as f:
             f.write("# Database configuration\n")
-            f.write(f"DB_HOST={DB_CONFIG['host']}\n")
-            f.write(f"DB_NAME={DB_CONFIG['database']}\n")
-            f.write(f"DB_USER={DB_CONFIG['user']}\n")
-            f.write(f"DB_PASSWORD={DB_CONFIG['password']}\n")
+            f.write(f"DB_HOST={MONGO_CONFIG['host']}\n")
+            f.write(f"DB_NAME={MONGO_CONFIG['database']}\n")
+            f.write(f"DB_USER={MONGO_CONFIG['user']}\n")
+            f.write(f"DB_PASSWORD={MONGO_CONFIG['password']}\n")
             f.write("\n# API configuration\n")
             f.write("API_HOST=0.0.0.0\n")
             f.write("API_PORT=8000\n")
@@ -232,8 +232,8 @@ def create_env_file():
             f.write("LLM_MODEL_NAME=gpt-3.5-turbo\n")
             f.write("LLM_TEMPERATURE=0.7\n")
             f.write("\n# File storage configuration\n")
-            f.write(f"TEMP_FILE_DIR={FILE_STORAGE['temp_dir']}\n")
-            f.write(f"MAX_UPLOAD_SIZE={FILE_STORAGE['max_upload_size']}\n")
+            f.write(f"TEMP_FILE_DIR={MONGO_CONFIG['temp_dir']}\n")
+            f.write(f"MAX_UPLOAD_SIZE={MONGO_CONFIG['max_upload_size']}\n")
         print(f".env file created at {os.path.abspath(env_path)}")
     else:
         print(".env file already exists.")

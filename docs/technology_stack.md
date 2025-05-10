@@ -8,7 +8,8 @@
 | Data Handling       | pandas, numpy                          |
 | NLP Models          | HuggingFace Transformers, GPT, FinBERT |
 | Retrieval           | FAISS, LangChain                       |
-| Storage             | PostgreSQL                             |
+| Storage             | MongoDB                                |
 | API Layer           | FastAPI                                |
 | Deployment          | Docker, GitHub Actions (CI/CD)         |
 | Monitoring          | Prometheus, custom dashboards          |
+| Database Driver     | PyMongo                                |

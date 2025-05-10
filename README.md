@@ -20,7 +20,7 @@ The Financial Document Intelligence System is designed to automatically process 
 The system consists of several key components:
 
 1. **API Layer**: FastAPI-based REST API for client interaction
-2. **Storage Layer**: PostgreSQL database for storing documents, segments, and insights
+2. **Storage Layer**: MongoDB database for storing documents, segments, and insights
 3. **Ingestion Pipeline**: Process and segment raw financial documents
 4. **NLP/LLM Pipeline**: Extract insights using various NLP/LLM components
 5. **Monitoring & Feedback**: Track model performance and collect human feedback
@@ -30,7 +30,7 @@ The system consists of several key components:
 ### Prerequisites
 
 - Python 3.9+
-- PostgreSQL
+- MongoDB
 - Docker and Docker Compose (optional)
 
 ### Installation

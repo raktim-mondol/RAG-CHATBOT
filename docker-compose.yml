@@ -6,10 +6,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DB_HOST=db
-      - DB_NAME=financial_intelligence
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
+      - MONGO_URI=mongodb://db:27017/financial_intelligence
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - API_KEY=${API_KEY:-default_api_key_change_me}
       - EMBEDDING_MODEL=ProsusAI/finbert
@@ -24,16 +21,12 @@ services:
     restart: always
 
   db:
-    image: postgres:14
-    environment:
-      - POSTGRES_DB=financial_intelligence
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    image: mongo:latest
     ports:
-      - "5432:5432"
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
     restart: always
 
 volumes:
-  postgres_data:
+  mongo_data:
