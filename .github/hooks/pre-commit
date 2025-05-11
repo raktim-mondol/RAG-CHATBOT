@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Pre-commit hook to check for sensitive data
+
+echo "Running pre-commit hook to check for sensitive data..."
+
+# Check for potential API keys
+if git diff --cached | grep -i -E 'api[_-]?key|token|secret|password|credential' | grep -i -v -E 'YOUR_API_KEY_HERE|your_api_key_here|example|sample'; then
+    echo "ERROR: Possible API keys, tokens, or credentials found in the code."
+    echo "Please remove them and use environment variables instead."
+    exit 1
+fi
+
+# Check for .env files that shouldn't be committed
+if git diff --cached --name-only | grep -E '\.env$|\.env\.[a-zA-Z0-9]+$' | grep -v '\.env\.example$'; then
+    echo "ERROR: Attempting to commit .env file. These should never be committed."
+    echo "Make sure your .env files are in .gitignore."
+    exit 1
+fi
+
+echo "No sensitive data detected. Proceeding with commit."
+exit 0

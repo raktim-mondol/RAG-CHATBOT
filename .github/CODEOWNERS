@@ -1,0 +1,12 @@
+# These owners will be the default owners for everything in the repo
+* @yourusername
+
+# Config files
+*.yml @yourusername
+*.yaml @yourusername
+
+# Source code
+/src/ @yourusername
+
+# Documentation
+/docs/ @yourusername
