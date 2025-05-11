@@ -1,0 +1,45 @@
+2025-05-11 16:22:20,020 - faiss.loader - INFO - Loading faiss with AVX2 support.
+2025-05-11 16:22:20,039 - faiss.loader - INFO - Successfully loaded faiss with AVX2 support.
+C:\Users\rakti\AppData\Roaming\Python\Python39\site-packages\langchain\llms\__init__.py:549: LangChainDeprecationWarning: Importing LLMs from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:
+
+`from langchain_community.llms import OpenAI`.
+
+To install langchain-community run `pip install -U langchain-community`.
+  warnings.warn(
+C:\Users\rakti\AppData\Roaming\Python\Python39\site-packages\langchain\llms\__init__.py:549: LangChainDeprecationWarning: Importing LLMs from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:
+
+`from langchain_community.llms import OpenAI`.
+
+To install langchain-community run `pip install -U langchain-community`.
+  warnings.warn(
+2025-05-11 16:22:21,033 - root - INFO - PredictionLogger initialized with log directory: logs
+2025-05-11 16:22:21,033 - root - INFO - Ingestion Pipeline initialized.
+C:\Users\rakti\AppData\Roaming\Python\Python39\site-packages\langchain_community\llms\openai.py:255: UserWarning: You are trying to use a chat model. This way of initializing it is no longer supported. Instead, please use: `from langchain_community.chat_models import ChatOpenAI`
+  warnings.warn(
+C:\Users\rakti\AppData\Roaming\Python\Python39\site-packages\langchain_community\llms\openai.py:1086: UserWarning: You are trying to use a chat model. This way of initializing it is no longer supported. Instead, please use: `from langchain_community.chat_models import ChatOpenAI`
+  warnings.warn(
+C:\Users\rakti\AppData\Roaming\Python\Python39\site-packages\huggingface_hub\file_download.py:1150: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+c:\Users\rakti\Downloads\RAG-CHATBOT\src\nlp_llm_pipeline\metric_extractor.py:33: LangChainDeprecationWarning: The class `LLMChain` was deprecated in LangChain 0.1.17 and will be removed in 1.0. Use :meth:`~RunnableSequence, e.g., `prompt | llm`` instead.
+  self.chain = LLMChain(llm=self.llm, prompt=self.prompt_template)
+2025-05-11 16:22:24,838 - src.storage_access.storage - INFO - Successfully connected to MongoDB at mongodb://localhost:27017/financial_intelligence and database 'financial_intelligence'
+2025-05-11 16:22:24,838 - root - INFO - Running Ingestion Pipeline...
+2025-05-11 16:22:24,838 - root - INFO - Processing document from file://c:\Users\rakti\Downloads\RAG-CHATBOT\dummy.pdf of type Financial Report
+2025-05-11 16:22:24,838 - root - INFO - Attempting to acquire document from: file://c:\Users\rakti\Downloads\RAG-CHATBOT\dummy.pdf
+2025-05-11 16:22:24,839 - root - ERROR - Error acquiring document from file://c:\Users\rakti\Downloads\RAG-CHATBOT\dummy.pdf: No connection adapters were found for 'file://c:\\Users\\rakti\\Downloads\\RAG-CHATBOT\\dummy.pdf'
+2025-05-11 16:22:24,840 - root - ERROR - Failed to acquire document.
+2025-05-11 16:22:24,840 - root - INFO - Cleaned up temporary file: c:\Users\rakti\Downloads\RAG-CHATBOT\dummy.pdf
+Starting simple_run.py
+PDF path: c:\Users\rakti\Downloads\RAG-CHATBOT\dummy.pdf
+PDF file exists at: c:\Users\rakti\Downloads\RAG-CHATBOT\dummy.pdf
+Python path: ['c:\\Users\\rakti\\Downloads\\RAG-CHATBOT', 'C:\\ProgramData\\Anaconda3\\envs\\image\\python39.zip', 'C:\\ProgramData\\Anaconda3\\envs\\image\\DLLs', 'C:\\ProgramData\\Anaconda3\\envs\\image\\lib', 'C:\\ProgramData\\Anaconda3\\envs\\image', 'C:\\Users\\rakti\\AppData\\Roaming\\Python\\Python39\\site-packages', 'C:\\ProgramData\\Anaconda3\\envs\\image\\lib\\site-packages', 'C:\\ProgramData\\Anaconda3\\envs\\image\\lib\\site-packages\\win32', 'C:\\ProgramData\\Anaconda3\\envs\\image\\lib\\site-packages\\win32\\lib', 'C:\\ProgramData\\Anaconda3\\envs\\image\\lib\\site-packages\\Pythonwin', 'c:\\Users\\rakti\\Downloads\\RAG-CHATBOT']
+Attempting to import components...
+Successfully imported components
+LLM Config: {'api_key': '[REDACTED]', 'model': 'gpt-4o-mini', 'temperature': 0.7}
+Initializing pipeline components...
+Loading embedding model: ProsusAI/finbert
+Pipeline components initialized
+Step 1: Running ingestion pipeline...
+MongoDB connection established
+Ingestion results: [None]
+Ingestion pipeline failed

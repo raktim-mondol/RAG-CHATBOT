@@ -1,0 +1,8 @@
+Total segments: 1
+
+Segment 1:
+  Type: default
+  Length: 746439 chars
+  Pages: 1 to 1
+  Sample: Table of Contents UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 __________...
+

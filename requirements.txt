@@ -4,7 +4,8 @@ requests
 beautifulsoup4
 pdfminer.six
 pymupdf
-torch
+torch==2.2.0
+torchvision==0.17.0
 transformers
 langchain
 langchain-community
@@ -12,10 +13,12 @@ pymongo
 python-dotenv
 faiss-cpu
 pydantic
-pytest
+pytest==8.1.1
+pytest-asyncio==0.23.7
 python-multipart
 scikit-learn
-scipy
+scipy==1.9.3
 numpy
 rouge
 openai==0.28.0
+tqdm==4.66.2

@@ -47,11 +47,6 @@ venv.bak/
 
 # Log files
 *.log
-run_log.txt
-test_output.txt
-*output.txt
-# Any file that might contain API keys
-*_output*.txt
 
 # Temporary files
 temp_files/

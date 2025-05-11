@@ -1,0 +1,6 @@
+Starting run_local_pipeline function
+Using PDF path: test_doc.pdf
+Processing file: test_doc.pdf
+Trying to connect to MongoDB...
+MongoDB connection established
+Loading embedding model: ProsusAI/finbert

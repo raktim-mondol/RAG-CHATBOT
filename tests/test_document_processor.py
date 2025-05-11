@@ -15,8 +15,8 @@ class TestDocumentProcessor(unittest.TestCase):
         self.processor = DocumentProcessor()
         self.test_text_content = "Test plain text content"
         
-        # Use dummy.pdf from project root
-        self.pdf_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "dummy.pdf")
+        # Use test_doc.pdf from project root
+        self.pdf_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "test_doc.pdf")
         
         # Create temporary test files
         self.temp_dir = tempfile.mkdtemp()

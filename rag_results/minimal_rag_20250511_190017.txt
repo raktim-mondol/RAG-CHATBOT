@@ -1,0 +1,7 @@
+=== MINIMAL RAG TEST RESULTS ===
+Date: 2025-05-11 19:00:17
+Model: gpt-3.5-turbo
+Query: What was Continental Resources' total revenue for the most recent year and how does it compare to the previous year?
+
+Response:
+The provided text does not contain the specific financial information regarding Continental Resources' total revenue for the most recent year or its comparison to the previous year. To determine the total revenue and its year-over-year comparison, you would need to refer to the financial statements section of the 10-K report, typically found under "Item 8. Financial Statements and Supplementary Data."

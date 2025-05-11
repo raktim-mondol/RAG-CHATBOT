@@ -1,0 +1,19 @@
+# .gitattributes file to specify handling of certain file types
+
+# Denote all files that are truly binary and should not be modified
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+
+# Ensure line endings are standardized
+* text=auto eol=lf
+
+# Mark files that should be excluded from language statistics
+*.ipynb linguist-vendored
+
+# Ensure script files have execute permission set when checked out on Unix-like systems
+*.sh text eol=lf
+*.py text eol=lf

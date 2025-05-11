@@ -1,0 +1,31 @@
+INFO:faiss.loader:Loading faiss with AVX2 support.
+INFO:faiss.loader:Successfully loaded faiss with AVX2 support.
+C:\Users\rakti\AppData\Roaming\Python\Python39\site-packages\langchain\llms\__init__.py:549: LangChainDeprecationWarning: Importing LLMs from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:
+
+`from langchain_community.llms import OpenAI`.
+
+To install langchain-community run `pip install -U langchain-community`.
+  warnings.warn(
+C:\Users\rakti\AppData\Roaming\Python\Python39\site-packages\langchain\llms\__init__.py:549: LangChainDeprecationWarning: Importing LLMs from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:
+
+`from langchain_community.llms import OpenAI`.
+
+To install langchain-community run `pip install -U langchain-community`.
+  warnings.warn(
+INFO:root:PredictionLogger initialized with log directory: logs
+INFO:root:Ingestion Pipeline initialized.
+C:\Users\rakti\AppData\Roaming\Python\Python39\site-packages\langchain_community\llms\openai.py:255: UserWarning: You are trying to use a chat model. This way of initializing it is no longer supported. Instead, please use: `from langchain_community.chat_models import ChatOpenAI`
+  warnings.warn(
+C:\Users\rakti\AppData\Roaming\Python\Python39\site-packages\langchain_community\llms\openai.py:1086: UserWarning: You are trying to use a chat model. This way of initializing it is no longer supported. Instead, please use: `from langchain_community.chat_models import ChatOpenAI`
+  warnings.warn(
+C:\Users\rakti\AppData\Roaming\Python\Python39\site-packages\huggingface_hub\file_download.py:1150: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+c:\Users\rakti\Downloads\RAG-CHATBOT\src\nlp_llm_pipeline\metric_extractor.py:33: LangChainDeprecationWarning: The class `LLMChain` was deprecated in LangChain 0.1.17 and will be removed in 1.0. Use :meth:`~RunnableSequence, e.g., `prompt | llm`` instead.
+  self.chain = LLMChain(llm=self.llm, prompt=self.prompt_template)
+INFO:root:Running Ingestion Pipeline...
+INFO:root:Processing document from file://c:\Users\rakti\Downloads\RAG-CHATBOT\dummy.pdf of type Financial Report
+INFO:root:Attempting to acquire document from: file://c:\Users\rakti\Downloads\RAG-CHATBOT\dummy.pdf
+ERROR:root:Error acquiring document from file://c:\Users\rakti\Downloads\RAG-CHATBOT\dummy.pdf: No connection adapters were found for 'file://c:\\Users\\rakti\\Downloads\\RAG-CHATBOT\\dummy.pdf'
+ERROR:root:Failed to acquire document.
+INFO:root:Cleaned up temporary file: c:\Users\rakti\Downloads\RAG-CHATBOT\dummy.pdf
+Loading embedding model: ProsusAI/finbert

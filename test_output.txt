@@ -1,0 +1,16 @@
+Test run at 2025-05-11 18:01:51.713767
+Python executable: C:\ProgramData\Anaconda3\python.exe
+Python version: 3.11.7 | packaged by Anaconda, Inc. | (main, Dec 15 2023, 18:05:47) [MSC v.1916 64 bit (AMD64)]
+PyMuPDF (fitz) imported successfully
+PDF file found at C:\Users\rakti\Downloads\RAG-CHATBOT\test_doc.pdf
+Opened PDF with 208 pages
+Successfully extracted text from first page (length: 4596 chars)
+First 100 chars (safely encoded): Table of Contents 
+?
+UNITED STATES
+SECURITIES AND EXCHANGE COMMISSION
+Washington, D.C. 20549
+_______
+Error importing IngestionPipeline: No module named 'pymongo'
+Error importing NLPLlmPipeline: No module named 'torch'
+Config imported successfully: {'api_key': '[REDACTED]', 'model': 'gpt-3.5-turbo', 'temperature': 0.7}

@@ -1,0 +1,62 @@
+=== RAG QUERY RESULTS ===
+
+Document: test_doc.pdf (Continental Resources 10-K)
+Model: gpt-3.5-turbo
+Temperature: 0.7
+Run time: 2025-05-11 19:04:53
+
+Query 1: What are Continental Resources' main business operations?
+--------------------------------------------------------------------------------
+
+The provided context from the financial document (10-K) of Continental Resources does not explicitly outline the main business operations of the company. The document primarily focuses on topics such as shareholding, executive procedures, financial statements, equity investments, and other related matters.
+
+To accurately determine Continental Resources' main business operations, one would typically need to refer to the company's business description or overview section within the 10-K document or the company's website. This section usually provides a detailed explanation of the company's primary activities, products, services, and industry focus.
+
+If you would like, I can assist you in finding this information by conducting additional research on the company's official website or other reliable sources. Would you like me to proceed with this research?
+
+================================================================================
+
+Query 2: What were the total revenues in the most recent fiscal year?
+--------------------------------------------------------------------------------
+
+The provided context does not contain specific information regarding the total revenues in the most recent fiscal year. It primarily focuses on corporate governance, meeting procedures, voting rights, and the long-term incentive plan of Continental Resources, Inc. 
+
+To determine the total revenues in the most recent fiscal year, it would be necessary to refer to the financial statements or the "Income Statement" section of the company's latest annual report (10-K filing with the SEC). This section typically outlines the company's total revenues or net sales generated during the fiscal year.
+
+I recommend accessing Continental Resources, Inc.'s official financial documents, such as their latest 10-K filing, to obtain the precise figure for the total revenues in the most recent fiscal year.
+
+================================================================================
+
+Query 3: What are the key risk factors mentioned in the document?
+--------------------------------------------------------------------------------
+
+The provided context from the financial document does not explicitly mention any key risk factors. The document primarily focuses on the organization's governance structure, procedures for conducting meetings of shareholders, regulations related to voting of shares, issuance and transfer of stock certificates, and other related rules and procedures. 
+
+In financial documents like a 10-K filing, key risk factors are typically outlined in a section specifically designated for risk factors. These sections usually highlight various risks that could potentially impact the company's financial performance, operations, or strategic objectives. The risks mentioned could include market risks, regulatory risks, operational risks, competitive risks, financial risks, or other factors that investors should be aware of when considering an investment in the company.
+
+If you are looking for specific key risk factors for the organization, it would be necessary to refer to a different section or source within the financial document that explicitly outlines the risks facing the company.
+
+================================================================================
+
+Query 4: Who are the executive officers of Continental Resources?
+--------------------------------------------------------------------------------
+
+Based on the provided context, the executive officers of Continental Resources are:
+
+1. Executive Chairman: The Executive Chairman supervises and directs the business and affairs of the Corporation. They sign deeds, mortgages, contracts, or other instruments on behalf of the Corporation. The Executive Chairman also performs duties usually vested in a chief executive officer and other duties assigned by the Board or Executive Committee.
+
+2. Chief Executive Officer (CEO): The CEO has general supervision, direction, and control of the business and officers of the Corporation. They hold the general powers and duties of management typically associated with a CEO and may have additional powers and duties prescribed by the Board, Executive Committee, Executive Chairman, or Bylaws.
+
+3. Chief Operating Officer (COO): The COO oversees the day-to-day business of the Corporation and directs daily affairs and policies. They have general management powers and duties associated with a COO and may have additional powers and duties as prescribed by the Board, Executive Committee, Executive Chairman, CEO, or Bylaws.
+
+4. Secretary: The Secretary is responsible for keeping meeting minutes, providing required notices, acting as custodian of records and the Corporation's seal, affixing the seal to authorized documents, maintaining a shareholder register, and signing certificates for shares.
+
+Unfortunately, the specific names of the individuals holding these positions at Continental Resources are not provided in the context. Additional information or a direct reference to the current individuals serving in these roles would be needed to provide specific names.
+
+================================================================================
+
+Query 5: What is the company's strategy for oil and gas exploration?
+--------------------------------------------------------------------------------
+
+The provided text does not explicitly mention the company's strategy for oil and gas exploration. The document primarily focuses on the estimation of proved crude oil and natural gas reserves, accounting practices related to crude oil and natural gas properties, regulatory risks associated with emissions, and legal implications concerning climate change and greenhouse gas emissions. As a financial analyst assistant, I do not have access to specific details about the company's exploration strategy unless it is outlined in the document. If you require information on the company's exploration strategy, I recommend referring to a different section of the financial document or seeking additional sources of information directly from the company's reports, presentations, or official announcements.
+

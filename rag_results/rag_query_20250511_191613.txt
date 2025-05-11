@@ -1,0 +1,54 @@
+=== RAG QUERY RESULTS ===
+
+Document: test_doc.pdf (Continental Resources 10-K)
+Model: gpt-4o-mini
+Temperature: 0.7
+Run time: 2025-05-11 19:16:13
+
+Query 1: What are main business operations?
+--------------------------------------------------------------------------------
+
+The provided context does not specify the main business operations of the Corporation. It includes details related to governance, shareholder meetings, voting rights, and the structure of capital stock, but it does not outline the specific nature of the business activities or operations that the Corporation engages in.
+
+To find information about the main business operations, one would typically look in other sections of the 10-K filing, such as the "Business" section or "Management's Discussion and Analysis" (MD&A), which typically contain descriptions of the company’s operations, products, services, and overall business strategy. Since this information is not included in the provided context, I cannot provide a detailed answer regarding the main business operations.
+
+================================================================================
+
+Query 2: What were the total revenues in the most recent fiscal year?
+--------------------------------------------------------------------------------
+
+The provided context from the financial document (10-K) does not include specific information regarding the total revenues for the most recent fiscal year. The excerpts focus mainly on the governance structure, shareholder meetings, voting procedures, and aspects of the Long Term Incentive Plan, without disclosing financial performance metrics such as total revenues.
+
+To find the total revenues for the most recent fiscal year, one would typically need to refer to the financial statements section of the 10-K report, specifically the income statement or financial highlights section. Since this information is not present in the provided context, I cannot provide the total revenues for the most recent fiscal year.
+
+================================================================================
+
+Query 3: What are the key risk factors mentioned in the document?
+--------------------------------------------------------------------------------
+
+The provided context does not mention any specific key risk factors. The text primarily outlines procedural aspects related to shareholder meetings, voting, the appointment of officers, the conduct of business, and the transfer of shares within the corporation. It does not include any sections or references to risk factors that might affect the corporation or its shareholders.
+
+Typically, risk factors would be found in a section explicitly labeled as "Risk Factors" within a 10-K filing, where companies disclose potential challenges that may impact their financial performance or operations. However, such a section is not included in the context provided.
+
+If you need information regarding risk factors, it may be beneficial to refer to another section of the 10-K document where these are more likely to be addressed, or to consult the full document for a comprehensive view.
+
+================================================================================
+
+Query 4: Summarize the company's financial performance over the last year.
+--------------------------------------------------------------------------------
+
+The provided context does not include any specific information regarding the company's financial performance over the last year. It primarily focuses on corporate governance, shareholder meetings, voting rights, and the roles of various corporate officers, including the Chief Financial Officer's responsibilities.
+
+To summarize the company's financial performance over the last year, one would typically look for key financial metrics such as revenue, net income, earnings per share, operating expenses, and any commentary on financial trends or future outlook provided in the financial statements or management discussion and analysis sections of the 10-K. Unfortunately, this context does not contain any of that financial data or analysis.
+
+If you need a summary of the financial performance, please provide the relevant financial data or sections from the 10-K that specifically address the company's financial results.
+
+================================================================================
+
+Query 5: What is the company's long term strategy for growth?
+--------------------------------------------------------------------------------
+
+The provided context does not contain specific information regarding the company's long-term strategy for growth. The details focus primarily on the terms and conditions of equity awards, including options, stock appreciation rights (SARs), cash awards, and the administrative mechanisms surrounding these awards. There is no mention of strategic initiatives, market expansion plans, product development, or any other elements typically associated with a long-term growth strategy.
+
+To accurately understand the company's long-term growth strategy, it would be necessary to refer to other sections of the 10-K document, such as the "Management's Discussion and Analysis" (MD&A) section or any specific strategic planning disclosures, neither of which are included in the provided context. If you have access to other sections of the report or additional documents, I would recommend reviewing those for insights into the company's growth strategy.
+
